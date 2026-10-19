@@ -6,6 +6,9 @@
   <a href="https://aspire-path-ai-client.vercel.app/" target="_blank">
     <img src="https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
   </a>
+  <a href="https://aspire-path-ai-client.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Google%20Auth-Working-4285F4?style=for-the-badge&logo=google&logoColor=white" alt="Google Auth" />
+  </a>
   <a href="https://github.com/sweetylinga/aspire-path-ai" target="_blank">
     <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository" />
   </a>
@@ -45,9 +48,9 @@
 **Your Personalized Smart Learning & Placement Hub**
 
 - 🚀 **Live Demo on Vercel:** [https://aspire-path-ai-client.vercel.app/](https://aspire-path-ai-client.vercel.app/)
-- **_Frontend is fully working & deployed_**
-- **_Backend is dynamic & Vercel-ready_**
-- **_Google Authentication is fully working_**
+- 🔐 **Google Sign-In Authentication:** Verified, active & working live with Firebase OAuth!
+- ⚡ **Frontend:** Fully functional and deployed on Vercel
+- 🛠️ **Backend:** Dynamic, CORS-enabled & Vercel serverless / Node-ready
 
 **_🚧 Important Note: Before you start working, check the GitHub repository branch._**
 **_🔄 First: Sync (pull) to the latest merged code from the main branch._**

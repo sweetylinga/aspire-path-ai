@@ -1,6 +1,7 @@
 # AspirePath AI Frontend Client
 
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://aspire-path-ai-client.vercel.app/)
+[![Google Auth](https://img.shields.io/badge/Google%20Auth-Working-4285F4?style=for-the-badge&logo=google&logoColor=white)](https://aspire-path-ai-client.vercel.app/)
 
 🌐 **Live Application URL**: [https://aspire-path-ai-client.vercel.app/](https://aspire-path-ai-client.vercel.app/)
 
