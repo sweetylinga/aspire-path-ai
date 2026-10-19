@@ -1,6 +1,19 @@
 <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
 
-<h1 align="center">🚀 Dev_Elevate </h1>
+<h1 align="center">🚀 AspirePath AI (Dev_Elevate) </h1>
+
+<p align="center">
+  <a href="https://aspire-path-ai-client.vercel.app/" target="_blank">
+    <img src="https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+  <a href="https://github.com/sweetylinga/aspire-path-ai" target="_blank">
+    <img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white" alt="GitHub Repository" />
+  </a>
+</p>
+
+<p align="center">
+  🌐 <b>Live Application URL:</b> <a href="https://aspire-path-ai-client.vercel.app/">https://aspire-path-ai-client.vercel.app/</a>
+</p>
 
 <img src="https://user-images.githubusercontent.com/74038190/212284100-561aa473-3905-4a80-b561-0d28506553ee.gif" width="100%">
 
@@ -31,9 +44,10 @@
 
 **Your Personalized Smart Learning & Placement Hub**
 
-**_Frontend is fully working_**
-**_Backend is fully working_**
-**_Google Authentication is fully working_**
+- 🚀 **Live Demo on Vercel:** [https://aspire-path-ai-client.vercel.app/](https://aspire-path-ai-client.vercel.app/)
+- **_Frontend is fully working & deployed_**
+- **_Backend is dynamic & Vercel-ready_**
+- **_Google Authentication is fully working_**
 
 **_🚧 Important Note: Before you start working, check the GitHub repository branch._**
 **_🔄 First: Sync (pull) to the latest merged code from the main branch._**

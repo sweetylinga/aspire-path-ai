@@ -1,5 +1,9 @@
 # AspirePath AI Frontend Client
 
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://aspire-path-ai-client.vercel.app/)
+
+🌐 **Live Application URL**: [https://aspire-path-ai-client.vercel.app/](https://aspire-path-ai-client.vercel.app/)
+
 ## 🚀 Overview
 
 AspirePath AI is a comprehensive developer platform built with React, TypeScript, and modern web technologies. This frontend application provides an intuitive and feature-rich interface for learning, coding practice, career development, and community engagement.
