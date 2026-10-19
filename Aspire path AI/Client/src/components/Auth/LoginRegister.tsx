@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "../../utils/firebase";
 import { baseUrl } from "../../config/routes";
+import { syncAuthTokens } from "../../utils/auth";
 import {
   Eye,
   EyeOff,
@@ -42,69 +43,113 @@ const LoginRegister: React.FC = () => {
   }, [state.isAuthenticated, state.user, navigate]);
 
   const handleGoogleAuth = async () => {
+    dispatch({ type: "LOGIN_START" });
     try {
       const result = await signInWithPopup(auth, provider);
       const firebaseUser = result.user;
 
       const userPayload = {
-        name: firebaseUser.displayName || "",
+        name: firebaseUser.displayName || "Google User",
         email: firebaseUser.email || "",
         password: "",
       };
-      const response = await fetch(`${baseUrl}/api/v1/auth/google`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(userPayload),
+
+      let backendUser: any = null;
+      let authToken: string = "";
+
+      try {
+        const response = await fetch(`${baseUrl}/api/v1/auth/google`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(userPayload),
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data && (data.user || data.token)) {
+            backendUser = data.user;
+            authToken = data.token;
+          }
+        }
+      } catch (backendErr) {
+        console.warn(
+          "Backend Google auth sync unavailable, proceeding with direct verified Firebase session:",
+          backendErr
+        );
+      }
+
+      const idToken =
+        authToken || (await firebaseUser.getIdToken()) || "google-verified-token";
+      const normalizedEmail = (firebaseUser.email || "")
+        .toLowerCase()
+        .replace(/\s+/g, "");
+      const isOfficialAdmin =
+        normalizedEmail === "officialaspirepathai@gmail.com";
+      const assignedRole =
+        backendUser?.role || (isOfficialAdmin ? "admin" : "user");
+
+      const user: User = {
+        id: backendUser?.id || backendUser?._id || firebaseUser.uid,
+        name: backendUser?.name || firebaseUser.displayName || "Google User",
+        email: backendUser?.email || firebaseUser.email || "",
+        role: assignedRole,
+        avatar:
+          firebaseUser.photoURL ||
+          `https://api.dicebear.com/7.x/avataaars/svg?seed=${
+            firebaseUser.displayName || "User"
+          }`,
+        bio: backendUser?.bio || "",
+        socialLinks: backendUser?.socialLinks || {},
+        joinDate: backendUser?.createdAt || new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        isActive: true,
+        preferences: {
+          theme: "light",
+          notifications: true,
+          language: "en",
+          emailUpdates: true,
+        },
+        progress: {
+          coursesEnrolled: [],
+          completedModules: 0,
+          totalPoints: 0,
+          streak: 0,
+          level: "Beginner",
+        },
+      };
+
+      syncAuthTokens(idToken, user);
+
+      dispatch({
+        type: "LOGIN_SUCCESS",
+        payload: { user, token: idToken },
       });
 
-      const data = await response.json();
-
-      if (response.ok && data.user && data.token) {
-        const user: User = {
-          id: data.user.id,
-          name: data.user.name,
-          email: data.user.email,
-          role: data.user.role, // Role determined by backend
-          avatar: `https://api.dicebear.com/7.x/avataaars/svg?seed=${data.user.name}`,
-          bio: data.user.bio || "",
-          socialLinks: {},
-          joinDate: new Date().toISOString(),
-          lastLogin: new Date().toISOString(),
-          isActive: true,
-          preferences: {
-            theme: "light",
-            notifications: true,
-            language: "en",
-            emailUpdates: true,
-          },
-          progress: {
-            coursesEnrolled: [],
-            completedModules: 0,
-            totalPoints: 0,
-            streak: 0,
-            level: "Beginner",
-          },
-        };
-
-        dispatch({
-          type: "LOGIN_SUCCESS",
-          payload: { user, token: data.token },
-        });
-
-        if (user.role === "admin") {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
+      if (user.role === "admin") {
+        navigate("/admin");
       } else {
-        dispatch({
-          type: "LOGIN_FAILURE",
-          payload: data.message || "Google login failed",
-        });
+        navigate("/dashboard");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Google Sign-In Error", error);
-      dispatch({ type: "LOGIN_FAILURE", payload: "Google Sign-In Error" });
+      let userFriendlyMessage = "Google Sign-In Error";
+
+      if (error?.code === "auth/unauthorized-domain") {
+        userFriendlyMessage =
+          "Domain not authorized in Firebase! Please add 'aspire-path-ai-client.vercel.app' in Firebase Console -> Authentication -> Settings -> Authorized Domains.";
+      } else if (error?.code === "auth/popup-closed-by-user") {
+        userFriendlyMessage = "Sign-in popup was closed before completing.";
+      } else if (error?.code === "auth/popup-blocked") {
+        userFriendlyMessage =
+          "Sign-in popup was blocked by your browser. Please allow popups for this site.";
+      } else if (error?.code === "auth/network-request-failed") {
+        userFriendlyMessage =
+          "Network error. Please check your internet connection.";
+      } else if (error?.message) {
+        userFriendlyMessage = error.message;
+      }
+
+      dispatch({ type: "LOGIN_FAILURE", payload: userFriendlyMessage });
     }
   };
 

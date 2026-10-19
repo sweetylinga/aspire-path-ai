@@ -287,33 +287,36 @@ export const googleUser = async (req, res) => {
   try {
     const { name, email, role } = req.body;
 
-    // ✅ Check if user already exists
-    let user = await User.findOne({ email });
+    const normalizedEmail = (email || "").toLowerCase().replace(/\s+/g, "");
+    const isAdminEmail = normalizedEmail === "officialaspirepathai@gmail.com";
+
+    // ✅ Check if user already exists (case-insensitive)
+    let user = await User.findOne({
+      email: { $regex: new RegExp(`^${normalizedEmail}$`, "i") },
+    });
 
     if (user) {
-      // ✅ CRITICAL FIX: Don't change existing user's role
-      // Only update name if it's different (e.g., user changed their Google name)
+      // ✅ Don't change existing user's role unless admin status changed
       if (user.name !== name) {
         user.name = name;
         await user.save();
       }
 
-      // ✅ Check if this user should NOT be admin
-      // Only officialAspirePath AI@gmail.com should be admin
-      if (user.role === "admin" && email !== "officialAspirePath AI@gmail.com") {
+      if (user.role === "admin" && !isAdminEmail) {
         user.role = "user";
+        await user.save();
+      } else if (isAdminEmail && user.role !== "admin") {
+        user.role = "admin";
         await user.save();
       }
     } else {
-      // ✅ CRITICAL: Always create new users with 'user' role
-      // Only make admin if email is officialAspirePath AI@gmail.com
-      const userRole =
-        email === "officialAspirePath AI@gmail.com" ? "admin" : "user";
+      // ✅ Assign role: only officialAspirePathAI@gmail.com gets admin
+      const userRole = isAdminEmail ? "admin" : "user";
 
       user = new User({
         name,
-        email,
-        role: userRole, // ✅ Use determined role, not from request
+        email: normalizedEmail,
+        role: userRole,
         password: "google-oauth-" + Math.random().toString(36).substring(7), // Random password
         bio: "",
         socialLinks: {
